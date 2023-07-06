@@ -5,7 +5,7 @@ import Loja from "./views/Loja";
 export const Content = () => {
     return (
         <Routes>
-            <Route exact path="/" Component={Loja}/>
+            <Route path="/" Component={Loja}/>
         </Routes>
     )
 }

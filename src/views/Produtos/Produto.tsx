@@ -1,20 +1,20 @@
 import { Grid } from "@mui/material";
+import axios from "axios";
 import React, { useEffect, useState } from "react"
-import Card from "../components/card/Card";
-import ProdutoModel from "./model/loja";
+import Card from "../../components/card/Card";
+import ProdutoModel from "./model/produto-model";
 
-export const Loja = () => {
+export const Produtos = () => {
 
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<ProdutoModel[]>([]);
 
     useEffect(() => {
-        const fetchApi = async () => {
-            const url = 'http://localhost:8080/produto'
-            const response = await fetch(url)
-            const objJson = await response.json()
-            setData(objJson)
-        }
-        fetchApi()
+        axios.get('http://localhost:8080/produto').then(res => {
+            setData(res.data)
+            console.log(res)
+        }).catch(e => {
+            console.log('erro')
+        })
     }, [])
 
     return (
@@ -36,4 +36,4 @@ export const Loja = () => {
     )
 }
 
-export default Loja;
+export default Produtos;

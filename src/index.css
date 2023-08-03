@@ -13,9 +13,9 @@ body {
   height: 100vh;
   width: 100vw;
   color: white;
-  overflow: hidden;
   font-size: 14px;
   /** 1em ou 1rem === 14px */
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
+  overflow: auto
 }

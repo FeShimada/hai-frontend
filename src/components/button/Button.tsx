@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const Button = styled.button`
   position: fixed;
-  top: 140px;
+  top: 280px;
   right: 200px;
   background-color: ${props => (props.disabled ? '#888' : 'black')}; /* Altere a cor de fundo se estiver desabilitado */
   color: white;

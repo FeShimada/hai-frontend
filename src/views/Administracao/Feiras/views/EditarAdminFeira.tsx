@@ -2,17 +2,17 @@ import { useFormik } from "formik";
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { Params, useNavigate, useParams } from "react-router-dom";
-import ProdutoAdminModel from "./model/ProdutoAdminModel";
 import * as Yup from 'yup';
 import Swal from "sweetalert2";
-import SwalComponent from "../../../components/swal/Swal";
+import SwalComponent from "../../../../components/swal/Swal";
 import { Button, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import LoadingBar from "react-top-loading-bar";
 import { styled } from "@mui/material/styles";
-import ImageUpload from "../../../components/image-upload/ImageUpload"
-import PageTitle from "../../../components/page-title/PageTitle";
+import FeiraAdminModel from "../model/FeiraAdminModel";
+import SituacaoRegistroEnum from "../model/SituacaoRegistroEnum";
+import PageTitle from "../../../../components/page-title/PageTitle";
 
 const useStyles = makeStyles((theme: any) => ({
     customGrid: {
@@ -68,53 +68,43 @@ const FinalizarButton = styled(Button)({
     },
 });
 
-function EditarAdministracaoProdutos() {
+function EditarAdminFeira() {
 
     const [progress, setProgress] = useState(0)
     const history = useNavigate();
     const { id }: Readonly<Params<string>> = useParams();
     const [enableReinitialize, setEnableReinitialize] = useState(false);
     const classes = useStyles();
-    const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
     useEffect(() => {
         if (id) setEnableReinitialize(true);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    useEffect(() => {
-        if (selectedImage) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setFieldValue('dsImagem', reader.result as string);
-            };
-            reader.readAsDataURL(selectedImage);
-        } else {
-            setFieldValue('dsImagem', '');
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedImage]);
-
     const [initialValues, setInitialValues] =
-        useState<ProdutoAdminModel>({
-            nrPreco: 0,
-            nmProduto: '',
-            dsProduto: '',
-            dsImagem: '',
-            nrQuantidade: 0,
-            feiras: []
-        } as ProdutoAdminModel
+        useState<FeiraAdminModel>({
+            nmFeira: '',
+            hrInicio: null,
+            hrTermino: null,
+            diasSemana: [],
+            endereco: {
+                rua: '',
+                numero: 0,
+                bairro: '',
+                cidade: '',
+                estado: '',
+                stRegistro: SituacaoRegistroEnum.CREATE
+            },
+            stRegistro: SituacaoRegistroEnum.CREATE
+        } as FeiraAdminModel
         );
 
-    const { values, errors, touched, handleBlur, handleSubmit, setFieldValue } = useFormik<ProdutoAdminModel>({
+    const { values, errors, touched, handleBlur, handleSubmit, setFieldValue } = useFormik<FeiraAdminModel>({
         validateOnBlur: true,
         enableReinitialize,
         initialValues,
         validationSchema: Yup.object().shape({
-            nrPreco: Yup.number().required('Campo obrigatório'),
-            nmProduto: Yup.string().required('Campo obrigatório'),
-            dsProduto: Yup.string().required('Campo obrigatório'),
-            nrQuantidade: Yup.number().required('Campo obrigatório')
+            nmFeira: Yup.string().required('Campo obrigatório')
         }),
         onSubmit: handleSubmitFormik,
     });
@@ -123,32 +113,32 @@ function EditarAdministracaoProdutos() {
         if (!enableReinitialize) return;
         setProgress(40)
 
-        axios.get('http://localhost:8080/produto/' + id).then(res => {
+        axios.get('http://localhost:8080/feira/' + id).then(res => {
             setInitialValues(res.data);
             setProgress(100)
         }).catch(() => {
             SwalComponent({
                 showConfirmButton: true,
                 title: 'Erro',
-                text: 'Produto não encontrado',
+                text: 'Feira não encontrada',
                 icon: 'error',
             });
 
-            history('/admin/produtos');
+            history('/admin/feiras');
         });
 
         // eslint-disable-next-line
     }, [enableReinitialize])
 
     const axiosUpdate = (values) => {
-        axios.put('http://localhost:8080/produto', values).then(res => {
+        axios.put('http://localhost:8080/feira', values).then(res => {
             SwalComponent({
                 showConfirmButton: true,
                 title: 'Sucesso',
                 text: id ? 'Editado com sucesso' : 'Cadastrado com sucesso',
                 icon: 'success'
             });
-            history('/admin/produtos');
+            history('/admin/feiras');
         }).catch(e => {
             SwalComponent({
                 showConfirmButton: true,
@@ -160,14 +150,14 @@ function EditarAdministracaoProdutos() {
     }
 
     const axiosSave = (values) => {
-        axios.post('http://localhost:8080/produto', values).then(res => {
+        axios.post('http://localhost:8080/feira', values).then(res => {
             SwalComponent({
                 showConfirmButton: true,
                 title: 'Sucesso',
                 text: id ? 'Editado com sucesso' : 'Cadastrado com sucesso',
                 icon: 'success'
             });
-            history('/admin/produtos');
+            history('/admin/feiras');
         }).catch(e => {
             SwalComponent({
                 showConfirmButton: true,
@@ -177,11 +167,6 @@ function EditarAdministracaoProdutos() {
             })
         })
     }
-
-    const handleImageChange = (file: File) => {
-        setSelectedImage(file);
-    };
-
 
     return (
 
@@ -196,11 +181,11 @@ function EditarAdministracaoProdutos() {
 
             <section>
                 {id ? (
-                    <PageTitle title="Edição de Produto" />
+                    <PageTitle title="Edição de Feira" />
                 ) : (
-                    <PageTitle title="Cadastro de Produto" />
+                    <PageTitle title="Cadastro de Feira" />
                 )}
-
+                
             </section>
 
             <section id='formulario' style={{
@@ -211,18 +196,18 @@ function EditarAdministracaoProdutos() {
                 <FormContainer container>
                     <Grid item xs={8} className={classes.gridCell}>
                         <CustomTextField
-                            name='nmProduto'
-                            label='Nome Produto'
+                            name='nmFeira'
+                            label='Nome da Feira'
                             inputProps={{ maxLength: 200 }}
-                            value={values.nmProduto}
-                            error={errors.nmProduto !== undefined && touched.nmProduto !== undefined}
-                            helperText={errors.nmProduto !== undefined && touched.nmProduto !== undefined ? `${errors.nmProduto}` : ''}
+                            value={values.nmFeira}
+                            error={errors.nmFeira !== undefined && touched.nmFeira !== undefined}
+                            helperText={errors.nmFeira !== undefined && touched.nmFeira !== undefined ? `${errors.nmFeira}` : ''}
                             onBlur={handleBlur}
                             onChange={(e) => setFieldValue(e.target.name, e.target.value)}
                         />
                     </Grid>
 
-                    <Grid item xs={2} className={classes.gridCell}>
+                    {/* <Grid item xs={2} className={classes.gridCell}>
                         <CustomTextField
                             name='nrQuantidade'
                             label='Quantidade por porção'
@@ -266,17 +251,12 @@ function EditarAdministracaoProdutos() {
                                 )
                             }}
                         />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                        <ImageUpload onChange={handleImageChange} />
-                    </Grid>
-
-
+                    </Grid> */}
+                    
                 </FormContainer>
             </section>
-
-            <div style={{ marginLeft: '20vh', marginTop: '10px' }}>
+            
+            <div style={{marginLeft: '20vh', marginTop: '10px'}}>
                 <CancelButton onClick={() => history('/admin/produtos')}>CANCELAR</CancelButton>
                 <FinalizarButton onClick={(e: any) => handleSubmit(e)}>FINALIZAR</FinalizarButton>
             </div>
@@ -286,7 +266,7 @@ function EditarAdministracaoProdutos() {
 
 
 
-    async function handleSubmitFormik(values: ProdutoAdminModel): Promise<void> {
+    async function handleSubmitFormik(values: FeiraAdminModel): Promise<void> {
 
         Swal.fire({
             title: 'Carregando...',
@@ -307,4 +287,4 @@ function EditarAdministracaoProdutos() {
 
 
 
-export default EditarAdministracaoProdutos
+export default EditarAdminFeira

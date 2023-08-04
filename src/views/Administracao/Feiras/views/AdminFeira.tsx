@@ -1,27 +1,28 @@
 import axios from "axios"
 import React, { useEffect, useState } from "react"
 import DataTable from "react-data-table-component"
-import ProdutoModel from "../../Produtos/model/produto-model"
-import CustomButton from "../../../components/button/Button"
+import CustomButton from "../../../../components/button/Button"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@mui/material"
 import AddIcon from '@mui/icons-material/Add';
 import LoadingBar from "react-top-loading-bar"
-import DeleteButton from "../../../components/button/DeleteButton"
-import SwalComponent from "../../../components/swal/Swal";
+import DeleteButton from "../../../../components/button/DeleteButton"
+import SwalComponent from "../../../../components/swal/Swal";
 import Swal from "sweetalert2"
-import PageTitle from "../../../components/page-title/PageTitle"
+import PageTitle from "../../../../components/page-title/PageTitle"
+import FeiraAdminModel from "../model/FeiraAdminModel"
+import moment from "moment";
 
-const AdministracaoRestaurantes = () => {
+const AdminFeira = () => {
 
-    const [data, setData] = useState<ProdutoModel[]>([])
-    const [selected, setSelected] = useState<ProdutoModel | undefined>();
+    const [data, setData] = useState<FeiraAdminModel[]>([])
+    const [selected, setSelected] = useState<FeiraAdminModel | undefined>();
     const [progress, setProgress] = useState(0)
     const history = useNavigate();
 
     useEffect(() => {
         setProgress(40)
-        axios.get('http://localhost:8080/produto').then(res => {
+        axios.get('http://localhost:8080/feira').then(res => {
             setData(res.data)
         }).catch(e => {
             SwalComponent({
@@ -37,29 +38,38 @@ const AdministracaoRestaurantes = () => {
     const collumns = [
         {
             name: 'Nome',
-            selector: (row: ProdutoModel) => row.nmProduto,
+            selector: (row: FeiraAdminModel) => row.nmFeira,
             sortable: true
         },
         {
-            name: 'Preço',
-            selector: (row: ProdutoModel) => row.nrPreco,
+            name: 'Data de Início',
+            selector: (row: FeiraAdminModel) => moment(row.hrInicio).format('DD/MM/YYYY'),
             sortable: true
         },
         {
-            name: 'Descrição',
-            selector: (row: ProdutoModel) => row.dsProduto,
+            name: 'Hora de Início',
+            selector: (row: FeiraAdminModel) => String(row.hrInicio).split('T')[1],
+        },
+        {
+            name: 'Data de Término',
+            selector: (row: FeiraAdminModel) => moment(row.hrTermino).format('DD/MM/YYYY'),
             sortable: true
         },
         {
-            name: 'Imagem',
-            cell: (row: ProdutoModel) => <img src={row.dsImagem} alt="Imagem do produto" style={{ width: '50px', height: '50px' }} />,
+            name: 'Hora de Término',
+            selector: (row: FeiraAdminModel) => String(row.hrTermino).split('T')[1],
+        },
+        {
+            name: 'Endereco',
+            selector: (row: FeiraAdminModel) => row.endereco.bairro,
+            sortable: true
         }
     ]
 
     const handleClickEdit = () => {
         if (!selected) return;
         setSelected(undefined)
-        history(`/admin/produtos/editar/${selected.idProduto}`);
+        history(`/admin/feiras/editar/${selected.idFeira}`);
     };
 
     const handleClickDelete = () => {
@@ -74,8 +84,8 @@ const AdministracaoRestaurantes = () => {
             allowOutsideClick: false,
         })
 
-        axios.delete('http://localhost:8080/produto/' + selected.idProduto).then(res => {
-            setData(data.filter(produto => produto.idProduto !== selected.idProduto))
+        axios.delete('http://localhost:8080/feira/' + selected.idFeira).then(res => {
+            setData(data.filter(produto => produto.idFeira !== selected.idFeira))
             SwalComponent({
                 showConfirmButton: true,
                 title: 'Sucesso',
@@ -105,7 +115,7 @@ const AdministracaoRestaurantes = () => {
                 />
 
             <section>
-                <PageTitle title="Lista de Produtos" />
+                <PageTitle title="Lista de Feiras" />
             </section>
 
             <div style={{
@@ -159,7 +169,7 @@ const AdministracaoRestaurantes = () => {
                             boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.25)",
                             zIndex: 9999
                         }}
-                        onClick={() => history('/admin/produtos/novo')}
+                        onClick={() => history('/admin/feiras/novo')}
                     >
                         <AddIcon />
                     </Button>
@@ -171,4 +181,4 @@ const AdministracaoRestaurantes = () => {
     )
 }
 
-export default AdministracaoRestaurantes
+export default AdminFeira

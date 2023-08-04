@@ -6,7 +6,7 @@ import ProdutoModel from "../model/produto-model";
 import PageTitle from "../../../components/page-title/PageTitle"
 import { Grid } from "@mui/material";
 import LoadingBar from "react-top-loading-bar";
-
+import SwalComponent from "../../../components/swal/Swal";
 
 const useStyles = makeStyles((theme: any) => ({
     customGrid: {
@@ -32,9 +32,13 @@ export const Produtos = () => {
         setProgress(40)
         axios.get('http://localhost:8080/produto').then(res => {
             setData(res.data)
-            console.log(res)
         }).catch(e => {
-            console.log('erro')
+            SwalComponent({
+                showConfirmButton: true,
+                title: 'Erro',
+                text: 'Erro ao carregar dados',
+                icon: 'error',
+            })
         })
 
         setProgress(100)

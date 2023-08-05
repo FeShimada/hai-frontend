@@ -5,7 +5,7 @@ import { Params, useNavigate, useParams } from "react-router-dom";
 import * as Yup from 'yup';
 import Swal from "sweetalert2";
 import SwalComponent from "../../../../components/swal/Swal";
-import { Button, Grid, InputAdornment, TextField, Typography } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import LoadingBar from "react-top-loading-bar";
@@ -13,6 +13,8 @@ import { styled } from "@mui/material/styles";
 import FeiraAdminModel from "../model/FeiraAdminModel";
 import SituacaoRegistroEnum from "../model/SituacaoRegistroEnum";
 import PageTitle from "../../../../components/page-title/PageTitle";
+import InputMask from "react-input-mask";
+import EditarDiasSemanaFeira from "./EditarDiasSemanaFeira";
 
 const useStyles = makeStyles((theme: any) => ({
     customGrid: {
@@ -77,15 +79,17 @@ function EditarAdminFeira() {
     const classes = useStyles();
 
     useEffect(() => {
-        if (id) setEnableReinitialize(true);
+        if (id) {
+            setEnableReinitialize(true);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const [initialValues, setInitialValues] =
         useState<FeiraAdminModel>({
             nmFeira: '',
-            hrInicio: null,
-            hrTermino: null,
+            hrInicio: '',
+            hrTermino: '',
             diasSemana: [],
             endereco: {
                 rua: '',
@@ -130,7 +134,10 @@ function EditarAdminFeira() {
         // eslint-disable-next-line
     }, [enableReinitialize])
 
-    const axiosUpdate = (values) => {
+    const axiosUpdate = (values: FeiraAdminModel) => {
+
+        values.endereco.stRegistro = SituacaoRegistroEnum.UPDATE
+
         axios.put('http://localhost:8080/feira', values).then(res => {
             SwalComponent({
                 showConfirmButton: true,
@@ -149,7 +156,10 @@ function EditarAdminFeira() {
         })
     }
 
-    const axiosSave = (values) => {
+    const axiosSave = (values: FeiraAdminModel) => {
+
+        values.endereco.stRegistro = SituacaoRegistroEnum.CREATE
+
         axios.post('http://localhost:8080/feira', values).then(res => {
             SwalComponent({
                 showConfirmButton: true,
@@ -166,6 +176,27 @@ function EditarAdminFeira() {
                 icon: 'error',
             })
         })
+    }
+
+
+
+    let mask = '12:34';
+    let formatChars = {
+        '1': '[0-2]',
+        '2': '[0-9]',
+        '3': '[0-5]',
+        '4': '[0-9]'
+    };
+
+    let beforeMaskedValueChange = (newState, oldState, userInput) => {
+        let { value } = newState;
+
+        // Conditional mask for the 2nd digit base on the first digit
+        if(value.startsWith('2'))
+        formatChars['2'] = '[0-3]'; // To block 24, 25, etc.
+        else
+        formatChars['2'] = '[0-9]'; // To allow 05, 12, etc.
+        return {value, selection: newState.selection};
     }
 
     return (
@@ -185,7 +216,7 @@ function EditarAdminFeira() {
                 ) : (
                     <PageTitle title="Cadastro de Feira" />
                 )}
-                
+
             </section>
 
             <section id='formulario' style={{
@@ -207,14 +238,49 @@ function EditarAdminFeira() {
                         />
                     </Grid>
 
-                    {/* <Grid item xs={2} className={classes.gridCell}>
+                    <Grid item xs={2} className={classes.gridCell}>
+                        <InputMask
+                            mask={mask}
+                            placeholder='HH-MM'
+                            value={values.hrInicio}
+                            onChange={(e) => {
+                                setFieldValue('hrInicio', e.target.value)
+                            }}
+                            formatChars={formatChars}
+                            beforeMaskedValueChange={beforeMaskedValueChange}
+                        >
+                            {() => <TextField
+                                label="Hora Início"
+                                value={values.hrInicio}
+                            />}
+                        </InputMask>
+                    </Grid>
+
+                    <Grid item xs={2} className={classes.gridCell}>
+                        <InputMask
+                            mask={mask}
+                            placeholder='HH-MM'
+                            value={values.hrTermino}
+                            onChange={(e) => setFieldValue('hrTermino', e.target.value)}
+                            formatChars={formatChars}
+                            beforeMaskedValueChange={beforeMaskedValueChange}
+                        >
+                            {() => <TextField
+                                label="Hora Término"
+                                value={values.hrTermino}
+                            />}
+                        </InputMask>
+                    </Grid>
+
+                    <Grid item xs={12} style={{ borderBottom: `1px solid`, color: '#2B1B17', marginBottom: '30px' }} />
+
+                    <Grid item xs={10} className={classes.gridCell}>
                         <CustomTextField
-                            name='nrQuantidade'
-                            label='Quantidade por porção'
-                            type='number'
-                            value={values.nrQuantidade}
-                            error={errors.nrQuantidade !== undefined && touched.nrQuantidade !== undefined}
-                            helperText={errors.nrQuantidade !== undefined && touched.nrQuantidade !== undefined ? `${errors.nrQuantidade}` : ''}
+                            name='endereco.rua'
+                            label='Rua'
+                            value={values.endereco.rua}
+                            error={errors.endereco !== undefined && touched.endereco !== undefined}
+                            helperText={errors.endereco !== undefined && touched.endereco !== undefined ? `${errors.endereco}` : ''}
                             onBlur={handleBlur}
                             onChange={(e) => setFieldValue(e.target.name, e.target.value)}
                         />
@@ -222,42 +288,69 @@ function EditarAdminFeira() {
 
                     <Grid item xs={2} className={classes.gridCell}>
                         <CustomTextField
-                            name='nrPreco'
-                            label='Preço do Produto'
+                            name='endereco.numero'
+                            label='Número'
                             type='number'
-                            value={values.nrPreco}
-                            error={errors.nrPreco !== undefined && touched.nrPreco !== undefined}
-                            helperText={errors.nrPreco !== undefined && touched.nrPreco !== undefined ? `${errors.nrPreco}` : ''}
+                            value={values.endereco.numero}
+                            error={errors.endereco !== undefined && touched.endereco !== undefined}
+                            helperText={errors.endereco !== undefined && touched.endereco !== undefined ? `${errors.endereco}` : ''}
                             onBlur={handleBlur}
                             onChange={(e) => setFieldValue(e.target.name, e.target.value)}
                         />
                     </Grid>
 
-                    <Grid item xs={12} style={{ height: 130 }}>
+                    <Grid item xs={12} className={classes.gridCell}>
                         <CustomTextField
-                            name='dsProduto'
-                            label='Descrição Produto'
-                            multiline
-                            value={values.dsProduto}
-                            error={errors.dsProduto !== undefined && touched.dsProduto !== undefined}
-                            helperText={errors.dsProduto !== undefined && touched.dsProduto !== undefined ? `${errors.dsProduto}` : ''}
+                            name='endereco.bairro'
+                            label='Bairro'
+                            value={values.endereco.bairro}
+                            error={errors.endereco !== undefined && touched.endereco !== undefined}
+                            helperText={errors.endereco !== undefined && touched.endereco !== undefined ? `${errors.endereco}` : ''}
                             onBlur={handleBlur}
                             onChange={(e) => setFieldValue(e.target.name, e.target.value)}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position='end'>
-                                        <Typography variant='subtitle1'>{values.dsProduto?.length ?? '0'}/400</Typography>
-                                    </InputAdornment>
-                                )
-                            }}
                         />
-                    </Grid> */}
-                    
+                    </Grid>
+
+                    <Grid item xs={5} className={classes.gridCell}>
+                        <CustomTextField
+                            name='endereco.cidade'
+                            label='Cidade'
+                            value={values.endereco.cidade}
+                            error={errors.endereco !== undefined && touched.endereco !== undefined}
+                            helperText={errors.endereco !== undefined && touched.endereco !== undefined ? `${errors.endereco}` : ''}
+                            onBlur={handleBlur}
+                            onChange={(e) => setFieldValue(e.target.name, e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid item xs={3} className={classes.gridCell}>
+                        <CustomTextField
+                            name='endereco.estado'
+                            label='Estado'
+                            value={values.endereco.estado}
+                            error={errors.endereco !== undefined && touched.endereco !== undefined}
+                            helperText={errors.endereco !== undefined && touched.endereco !== undefined ? `${errors.endereco}` : ''}
+                            onBlur={handleBlur}
+                            onChange={(e) => setFieldValue(e.target.name, e.target.value)}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} style={{ borderBottom: `1px solid`, color: '#2B1B17', marginBottom: '30px' }} />
+
+                    <EditarDiasSemanaFeira
+                        setFieldValue={setFieldValue}
+                        handleBlur={handleBlur}
+                        values={values}
+                        initialValues={initialValues}
+                        errors={errors}
+                        touched={touched}
+                    />
+
                 </FormContainer>
             </section>
-            
-            <div style={{marginLeft: '20vh', marginTop: '10px'}}>
-                <CancelButton onClick={() => history('/admin/produtos')}>CANCELAR</CancelButton>
+
+            <div style={{ marginLeft: '20vh', marginTop: '10px' }}>
+                <CancelButton onClick={() => history('/admin/feiras')}>CANCELAR</CancelButton>
                 <FinalizarButton onClick={(e: any) => handleSubmit(e)}>FINALIZAR</FinalizarButton>
             </div>
 

@@ -11,7 +11,6 @@ import SwalComponent from "../../../../components/swal/Swal";
 import Swal from "sweetalert2"
 import PageTitle from "../../../../components/page-title/PageTitle"
 import FeiraAdminModel from "../model/FeiraAdminModel"
-import moment from "moment";
 
 const AdminFeira = () => {
 
@@ -42,22 +41,12 @@ const AdminFeira = () => {
             sortable: true
         },
         {
-            name: 'Data de Início',
-            selector: (row: FeiraAdminModel) => moment(row.hrInicio).format('DD/MM/YYYY'),
-            sortable: true
-        },
-        {
             name: 'Hora de Início',
-            selector: (row: FeiraAdminModel) => String(row.hrInicio).split('T')[1],
-        },
-        {
-            name: 'Data de Término',
-            selector: (row: FeiraAdminModel) => moment(row.hrTermino).format('DD/MM/YYYY'),
-            sortable: true
+            selector: (row: FeiraAdminModel) => row.hrInicio,
         },
         {
             name: 'Hora de Término',
-            selector: (row: FeiraAdminModel) => String(row.hrTermino).split('T')[1],
+            selector: (row: FeiraAdminModel) => row.hrTermino,
         },
         {
             name: 'Endereco',

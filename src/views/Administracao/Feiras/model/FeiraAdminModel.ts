@@ -10,8 +10,8 @@ import SituacaoRegistroEnum from "./SituacaoRegistroEnum"
 interface FeiraAdminModel {
     idFeira?: string
     nmFeira: string
-    hrInicio: Date | string | null
-    hrTermino: Date | string | null
+    hrInicio: string
+    hrTermino: string
     diasSemana: DiasDaSemanaEnum[]
     endereco: EnderecoModel
     stRegistro: SituacaoRegistroEnum

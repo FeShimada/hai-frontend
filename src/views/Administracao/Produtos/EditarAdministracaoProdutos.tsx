@@ -6,13 +6,18 @@ import ProdutoAdminModel from "./model/ProdutoAdminModel";
 import * as Yup from 'yup';
 import Swal from "sweetalert2";
 import SwalComponent from "../../../components/swal/Swal";
-import { Button, Grid, InputAdornment, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import React from "react";
 import { makeStyles } from "@mui/styles";
 import LoadingBar from "react-top-loading-bar";
 import { styled } from "@mui/material/styles";
 import ImageUpload from "../../../components/image-upload/ImageUpload"
 import PageTitle from "../../../components/page-title/PageTitle";
+import AdminFeiraModel from '../Feiras/model/FeiraAdminModel'
+import FeiraAdminModel from "../Feiras/model/FeiraAdminModel";
+import AddIcon from '@mui/icons-material/Add';
+import FeiraTable from "./FeiraTable";
+import SituacaoRegistroEnum from "../Feiras/model/SituacaoRegistroEnum";
 
 const useStyles = makeStyles((theme: any) => ({
     customGrid: {
@@ -44,6 +49,7 @@ const FormContainer = styled(Grid)({
     padding: "20px 30px", // Reduce lateral padding
     width: '80%',
     borderRadius: 10
+    
 });
 
 const CustomTextField = styled(TextField)({
@@ -76,9 +82,27 @@ function EditarAdministracaoProdutos() {
     const [enableReinitialize, setEnableReinitialize] = useState(false);
     const classes = useStyles();
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
+    const [feiras, setFeiras] = useState<AdminFeiraModel[]>([])
+    const [dataFeiras, setDataFeiras] = useState<AdminFeiraModel[]>([])
+    const [selectedFeira, setSelectedFeira] = useState<AdminFeiraModel>()
 
     useEffect(() => {
         if (id) setEnableReinitialize(true);
+
+        axios.get('http://localhost:8080/feira').then(res => {
+            setFeiras(res.data)
+            setProgress(100)
+        }).catch(() => {
+            SwalComponent({
+                showConfirmButton: true,
+                title: 'Erro',
+                text: 'Falha ao carregar os dados.',
+                icon: 'error',
+            });
+
+            history('/admin/produtos');
+        });
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -124,8 +148,10 @@ function EditarAdministracaoProdutos() {
         setProgress(40)
 
         axios.get('http://localhost:8080/produto/' + id).then(res => {
-            setInitialValues(res.data);
             setProgress(100)
+            setInitialValues(res.data);
+            setDataFeiras(res.data.feiras as FeiraAdminModel[])
+            console.log(res.data)
         }).catch(() => {
             SwalComponent({
                 showConfirmButton: true,
@@ -136,7 +162,6 @@ function EditarAdministracaoProdutos() {
 
             history('/admin/produtos');
         });
-
         // eslint-disable-next-line
     }, [enableReinitialize])
 
@@ -182,6 +207,14 @@ function EditarAdministracaoProdutos() {
         setSelectedImage(file);
     };
 
+    const handleClickAdd = () => {
+        if(selectedFeira) {
+            selectedFeira.stRegistro = SituacaoRegistroEnum.CREATE
+            setDataFeiras([...dataFeiras, selectedFeira])
+            setFieldValue('feiras', [...dataFeiras, selectedFeira])
+        }
+
+    }
 
     return (
 
@@ -266,6 +299,44 @@ function EditarAdministracaoProdutos() {
                                 )
                             }}
                         />
+                    </Grid>
+
+                    <Grid item xs={3} style={{ height: 80 }}>
+                        <Autocomplete
+                            disablePortal
+                            id="combo-box-demo"
+                            options={feiras}
+                            getOptionLabel={(option: FeiraAdminModel) => option.nmFeira}
+                            value={selectedFeira}
+                            onChange={(event, newValue) => {if(newValue)setSelectedFeira(newValue)} }
+                            sx={{ width: 300 }}
+                            renderInput={(params) => <TextField {...params} label="Feiras Relacionadas" />}
+                        />
+                    </Grid>
+
+                    <Grid item xs={9} style={{ height: 50 }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                                top: '8px',
+                                right: "10px",
+                                borderRadius: "20%",
+                                width: "5px",
+                                height: "40px",
+                                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.25)",
+                                zIndex: 9999
+                            }}
+                            onClick={handleClickAdd}
+                        >
+                            <AddIcon />
+                        </Button>
+                    </Grid>
+
+                    <Grid item xs={12} style={{ height: 130 }}>
+                        <div style={{ maxHeight: 100, overflowY: 'auto' }}>
+                            <FeiraTable data={dataFeiras} setData={setDataFeiras} setFieldValue={setFieldValue} />
+                        </div>
                     </Grid>
 
                     <Grid item xs={12}>

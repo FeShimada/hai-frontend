@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, Typography, useMediaQuery } from '@mui/material';
+import { Link } from "react-router-dom";
 import styled from 'styled-components';
 
 const CardContainer = styled(Card)`
@@ -73,6 +74,7 @@ interface CardProps {
   title: string;
   description: string;
   price: number;
+  idProduto: string | undefined;
 }
 
 const CustomButton = styled.button`
@@ -117,38 +119,41 @@ const ContainerAll = styled.div`
 }
 `;
 
-const CustomCard: React.FC<CardProps> = ({ imageUrl, title, description, price }) => {
+const CustomCard: React.FC<CardProps> = ({ imageUrl, title, description, price, idProduto }) => {
   // Utilize useMediaQuery para detectar se a tela é menor que 600px
   const isSmallScreen = useMediaQuery('(max-width:769px)');
 
   return (
-    <div style={{ margin: '20px'}} >
+    <div style={{ margin: '20px' }} >
 
-      <ContainerAll>
-        <CardContainer>
-          <CardImage src={imageUrl} alt="Card Image" />
+      <Link to={`/produtos/view/${idProduto}`} style={{ textDecoration: 'none' }}>
+        <ContainerAll>
+          <CardContainer>
+            <CardImage src={imageUrl} alt="Card Image" />
 
-          {/* Ajuste o conteúdo do card dependendo do tamanho da tela */}
-          {isSmallScreen ? (
-            <CardContentWrapper>
-              <CardTitle variant="h4">{title}</CardTitle>
-              <CardDescription variant="body2">{description}</CardDescription>
-              <CardPrice>R$ {formatNumberWithMask(price)}</CardPrice>
-            </CardContentWrapper>
-          ) : (
-            <CardContentWrapper>
-              <CardTitle variant="h2">{title}</CardTitle>
-              <CardDescription variant="body1">{description}</CardDescription>
-              <CardPrice>R$ {formatNumberWithMask(price)}</CardPrice>
-            </CardContentWrapper>
+            {/* Ajuste o conteúdo do card dependendo do tamanho da tela */}
+            {isSmallScreen ? (
+              <CardContentWrapper>
+                <CardTitle variant="h4">{title}</CardTitle>
+                <CardDescription variant="body2">{description}</CardDescription>
+                <CardPrice>R$ {formatNumberWithMask(price)}</CardPrice>
+              </CardContentWrapper>
+            ) : (
+              <CardContentWrapper>
+                <CardTitle variant="h2">{title}</CardTitle>
+                <CardDescription variant="body1">{description}</CardDescription>
+                <CardPrice>R$ {formatNumberWithMask(price)}</CardPrice>
+              </CardContentWrapper>
 
-          )}
-        </CardContainer>
+            )}
+          </CardContainer>
 
-        <CustomButton>Ver Mais</CustomButton>
-      </ContainerAll>
-      
-      
+          <CustomButton>Ver Mais</CustomButton>
+        </ContainerAll>
+      </Link>
+
+
+
 
     </div>
 

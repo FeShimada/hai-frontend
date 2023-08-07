@@ -2,6 +2,7 @@ import AdminFeira from "./views/Administracao/Feiras/views/AdminFeira";
 import EditarAdminFeira from "./views/Administracao/Feiras/views/EditarAdminFeira";
 import AdministracaoRestaurantes from "./views/Administracao/Produtos/AdministracaoProdutos";
 import EditarAdministracaoProdutos from "./views/Administracao/Produtos/EditarAdministracaoProdutos";
+import ViewProduto from "./views/Produtos/views/ViewProduto";
 
 
 export type ScreenRoutesType = {
@@ -41,6 +42,10 @@ const viewsRoutes: ScreenRoutesType[] = [
         path: 'feiras/editar/:id',
         component: EditarAdminFeira,
     },
+    {
+        path: 'view/:id',
+        component: ViewProduto
+    }
 
 ]
 

@@ -6,6 +6,7 @@ import AppMainLayout from './AppMainLayout';
 import { useNavigate } from 'react-router-dom';
 import Navbar from "./components/navbar/Navbar";
 import AdminHeader from "./components/navbar/AdminHeader"
+import PageNotFound from "./components/page-not-found/PageNotFound"
 
 export const Content = () => {
 
@@ -30,6 +31,7 @@ export const Content = () => {
             {isAdminRoute && <AdminHeader/>}
 
             <Routes>
+                <Route path="*" element={<PageNotFound />} />
                 <Route path='/' element={<Redirect to='/home' />} />
                 <Route path="/produtos" element={<Produtos/> }/>
                 <Route path='/admin/*' element={<AppMainLayout />} />

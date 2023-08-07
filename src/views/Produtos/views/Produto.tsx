@@ -46,7 +46,7 @@ export const Produtos = () => {
     }, [])
 
     return (
-        <main style={{ height: '100%' }}>
+        <main style={{ height: '100vh' }}>
 
             <LoadingBar
                 color='#000000'
@@ -68,6 +68,7 @@ export const Produtos = () => {
                             data.map((e: ProdutoModel) => (
                                 <Grid item xs={6} sm={4} md={4} key={e.idProduto}>
                                     <Card
+                                        idProduto={e.idProduto}
                                         title={e.nmProduto}
                                         description={e.dsProduto}
                                         imageUrl={e.dsImagem}

@@ -53,12 +53,14 @@ const Footer = () => {
           <Heading>HAI EVENTOS</Heading>
         </div>
         <Description>Slogan ou descrição curta sobre a empresa e seus produtos alimentícios.</Description>
-        <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "30px" }}>
-          <Link href="#">Home</Link>
-          <Link href="#">Produtos</Link>
-          <Link href="#">Sobre Nós</Link>
-          <Link href="#">Contato</Link>
-          <Link href="/admin">Administrativo</Link>
+        <div style={{}} className='container row mx-auto'>
+          <Link className="col-12 col-md-4 col-xxl-2" href="#">Home</Link>
+          <Link className="col-12 col-md-4 col-xxl-2" href="#">Produtos</Link>
+          <Link className="col-12 col-md-4 col-xxl-2" href="#">Sobre Nós</Link>
+          <Link className="col-12 col-md-4 col-xxl-2" href="#">Contato</Link>
+          <Link className="col-12 col-md-4 col-xxl-2" href="/admin">Administrativo</Link>
+          <Link className="col-12 col-md-4 col-xxl-2" href="/admin">Telefone</Link>
+
         </div>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "10px", marginTop: "30px" }}>
           <SocialIconLink href="#"><i className="fab fa-facebook-f"></i></SocialIconLink>

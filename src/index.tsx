@@ -1,5 +1,4 @@
 import React from 'react';
-import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
@@ -9,6 +8,9 @@ import { theme } from './utils/constants'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import 'moment/locale/en-gb';
+import 'bootstrap/dist/css/bootstrap.css';
+import './index.css';
+
 
 const root = createRoot(document.getElementById("root") as HTMLElement);
 

@@ -25,7 +25,7 @@ const useOutsideClick = (ref: React.RefObject<HTMLDivElement>, onClickOutside: (
 
 const Navbar: React.FC<NavbarProps> = ({ route, path }) => {
   const [clicked, setClicked] = useState(false);
-  const navRef = useRef<HTMLDivElement>(null);
+  const navRef = useRef<HTMLDivElement>(null); // referencia objeto mutavel o current pode ser usada para armazenar valores mutáveis que persistirão entre as renderizações do componente.
 
   const handleToggleSidebar = () => {
     setClicked(!clicked);
@@ -43,7 +43,8 @@ const Navbar: React.FC<NavbarProps> = ({ route, path }) => {
         <img src={logo} alt="Logo da empresa" />
       </NavLink>
 
-      <div ref={navRef}>
+      {/* queremos referenciar essa div, para manipula-la */}
+      <div ref={navRef}> 
         <ul id="navbar" className={clicked ? "active" : ""}>
           <li>
             <NavLink to="/" onClick={handleSidebarClose}>

@@ -46,7 +46,7 @@ export const Produtos = () => {
     }, [])
 
     return (
-        <main style={{ height: '100vh' }}>
+        <main style={{ height: '100%' }}>
 
             <LoadingBar
                 color='#000000'
@@ -62,11 +62,11 @@ export const Produtos = () => {
             <Grid item xs={12} style={{ borderBottom: `1px solid` }} />
 
             <section>
-                <div className={classes.container}>
-                    <Grid container spacing={2} className={classes.customGrid}>
+                <div className='container'>
+                    <Grid container spacing={2} className='row'>
                         {
                             data.map((e: ProdutoModel) => (
-                                <Grid item xs={6} sm={4} md={4} key={e.idProduto}>
+                                <Grid item key={e.idProduto} className='col-12 col-md-4 col-xxxl-2'>
                                     <Card
                                         idProduto={e.idProduto}
                                         title={e.nmProduto}
@@ -80,6 +80,8 @@ export const Produtos = () => {
                     </Grid>
                 </div>
             </section>
+
+
 
         </main>
     )

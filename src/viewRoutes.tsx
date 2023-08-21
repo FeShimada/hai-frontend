@@ -2,6 +2,7 @@ import AdminFeira from "./views/Administracao/Feiras/views/AdminFeira";
 import EditarAdminFeira from "./views/Administracao/Feiras/views/EditarAdminFeira";
 import AdministracaoRestaurantes from "./views/Administracao/Produtos/AdministracaoProdutos";
 import EditarAdministracaoProdutos from "./views/Administracao/Produtos/EditarAdministracaoProdutos";
+import Produtos from "./views/Produtos/views/Produto";
 import ViewProduto from "./views/Produtos/views/ViewProduto";
 
 
@@ -44,7 +45,8 @@ const viewsRoutes: ScreenRoutesType[] = [
     },
     {
         path: 'view/:id',
-        component: ViewProduto
+        exactPath: true,
+        component: Produtos
     }
 
 ]

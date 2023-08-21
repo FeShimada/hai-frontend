@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from "./components/navbar/Navbar";
 import AdminHeader from "./components/navbar/AdminHeader"
 import PageNotFound from "./components/page-not-found/PageNotFound"
+import Home from "./views/Home/views/Home";
 
 export const Content = () => {
 
@@ -36,6 +37,8 @@ export const Content = () => {
                 <Route path="/produtos" element={<Produtos/> }/>
                 <Route path='/admin/*' element={<AppMainLayout />} />
                 <Route path='/produtos/*' element={<AppMainLayout />} />
+                <Route path='/home/*' element={<Home />} />
+
             </Routes>
 
             {shouldRenderFooter && <Footer />} {/* Renderiza o rodapé, exceto na rota de administração */}

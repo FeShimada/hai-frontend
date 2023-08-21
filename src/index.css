@@ -17,5 +17,8 @@ body {
   /** 1em ou 1rem === 14px */
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
-  overflow: auto
+  overflow: auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

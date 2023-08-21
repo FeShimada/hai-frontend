@@ -1,7 +1,8 @@
-import React from 'react';
-import { Card, CardContent, Typography, useMediaQuery } from '@mui/material';
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Card, CardContent, Grid, Typography, useMediaQuery } from '@mui/material';
+import { Link, useNavigate } from "react-router-dom";
 import styled from 'styled-components';
+import ViewProduto from '../../views/Produtos/views/ViewProduto'
 
 const CardContainer = styled(Card)`
   position: relative;
@@ -14,7 +15,7 @@ const CardContainer = styled(Card)`
   /* Adicione as classes de responsividade */
   @media (max-width:769px) {
     width: 100%;
-    height: auto;
+    height: 200px;
   }
 
 `;
@@ -26,6 +27,10 @@ const CardImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+
+  @media (max-width:769px) {
+    width: 100%;
+  }
 `;
 
 const CardContentWrapper = styled(CardContent)`
@@ -123,10 +128,20 @@ const CustomCard: React.FC<CardProps> = ({ imageUrl, title, description, price, 
   // Utilize useMediaQuery para detectar se a tela é menor que 600px
   const isSmallScreen = useMediaQuery('(max-width:769px)');
 
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const history = useNavigate();
+
+  const togglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
+  
+
   return (
     <div style={{ margin: '20px' }} >
 
-      <Link to={`/produtos/view/${idProduto}`} style={{ textDecoration: 'none' }}>
+      {isPopupOpen && <ViewProduto idProduto={idProduto} onClose={togglePopup} />}      
+
+      <Grid style={{ textDecoration: 'none' }} onClick={togglePopup}>
         <ContainerAll>
           <CardContainer>
             <CardImage src={imageUrl} alt="Card Image" />
@@ -150,9 +165,9 @@ const CustomCard: React.FC<CardProps> = ({ imageUrl, title, description, price, 
 
           <CustomButton>Ver Mais</CustomButton>
         </ContainerAll>
-      </Link>
+      </Grid>
 
-
+          
 
 
     </div>

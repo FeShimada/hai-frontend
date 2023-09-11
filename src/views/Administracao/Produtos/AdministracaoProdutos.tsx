@@ -117,12 +117,29 @@ const AdministracaoRestaurantes = () => {
 
                 <div style={{ width: '80%', marginTop: '50px' }} >
 
-                    <CustomButton
-                        disabled={selected ? false : true}
-                        onClick={handleClickEdit}
-                    >Editar</CustomButton>
+                    <div className='p-5 d-flex align-items-center gap-3 justify-content-end'>
+                        <CustomButton
+                            disabled={selected ? false : true}
+                            onClick={handleClickEdit}
+                        >Editar</CustomButton>
 
-                    <DeleteButton disabled={selected ? false : true}  onClick={handleClickDelete} />
+                        <DeleteButton disabled={selected ? false : true}  onClick={handleClickDelete} />
+
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            style={{
+                                borderRadius: "20%",
+                                width: "5px",
+                                height: "40px",
+                                boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.25)",
+                                zIndex: 9999
+                            }}
+                            onClick={() => history('/admin/produtos/novo')}
+                        >
+                            <AddIcon />
+                        </Button>
+                    </div>
 
                     <DataTable
                         columns={collumns}
@@ -145,24 +162,6 @@ const AdministracaoRestaurantes = () => {
                         }}
                         selectableRowsSingle
                     />
-
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        style={{
-                            position: "fixed",
-                            top: '280px',
-                            right: "300px",
-                            borderRadius: "20%",
-                            width: "5px",
-                            height: "40px",
-                            boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.25)",
-                            zIndex: 9999
-                        }}
-                        onClick={() => history('/admin/produtos/novo')}
-                    >
-                        <AddIcon />
-                    </Button>
                 </div>
             </div>
         </main>

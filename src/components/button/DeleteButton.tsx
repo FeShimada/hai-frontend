@@ -3,9 +3,6 @@ import styled from 'styled-components';
 import DeleteIcon from '@mui/icons-material/Delete'; // Import the MUI delete icon
 
 const RoundButton = styled.button`
-  position: fixed;
-  top: 280px;
-  right: 380px;
   background-color: ${props => (props.disabled ? '#888' : 'red')}; /* Altere a cor de fundo se estiver desabilitado */
   color: white;
   padding: 10px;
